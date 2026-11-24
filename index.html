@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="idxTitle">SeoulMate | Banderillas Coreanas</title>
+    <!-- Vinculación del CSS -->
+    <link rel="stylesheet" href="CSS/PortadaSeoulmate.css">
+</head>
+<body>
+
+    <!-- ===== CANVAS DE PÉTALOS CAYENDO ===== -->
+    <canvas id="petals-canvas"></canvas>
+
+    <!-- ===== ENCABEZADO ===== -->
+    <header>
+        <div class="logo">
+            <div class="logo-icon">✿</div>
+            <div class="logo-text">
+                <h2>SeoulMate</h2>
+                <p data-i18n="idxTagline">한국식 반데리야스</p>
+            </div>
+        </div>
+
+        <!-- Selector de idioma: lo elegido aquí se aplica también al menú y al administrador -->
+        <div class="lang-selector-wrapper">
+            <span class="lang-icon">🌐</span>
+            <select id="lang-selector" class="sm-lang" onchange="SM.setLang(this.value)" aria-label="Idioma / Language / 언어">
+                <option value="es">ES - Español</option>
+                <option value="en">EN - English</option>
+                <option value="ko">KR - 한국어</option>
+            </select>
+        </div>
+    </header>
+
+    <!-- ===== CONTENIDO CON TARJETA ===== -->
+    <main class="main-container">
+        <section class="hero-card">
+            <!-- TEXTO -->
+            <div class="contenido">
+                <p class="subtitulo" data-i18n="idxSub">COREA · MÉXICO</p>
+                <h1 data-i18n-html="idxH1">
+                    Sabores que<br>
+                    <span>florecen ✿</span>
+                </h1>
+                <p class="descripcion" data-i18n="idxDesc">
+                    Descubre lo mejor de la gastronomía urbana coreana: desde deliciosos antojitos hasta nuestras especialidades llenas de sabor y tradición.
+                </p>
+                <div class="botones">
+                    <a href="Menu.html" class="menu-btn" data-i18n="idxMenuBtn">Ver Menú</a>
+                    <!-- Botón que abre nuestra ventana personalizada -->
+                    <a href="#" onclick="abrirModalAdmin(event)" class="admin-btn" data-i18n="idxAdminBtn">Administrador</a>
+                    <div class="horario" data-i18n="idxHours">
+                        🕐 &nbsp; 12pm – 10pm
+                    </div>
+                </div>
+            </div>
+
+            <!-- IMAGEN DEL CEREZO -->
+            <div class="imagen">
+                <img src="img/cerezo2.jfif" alt="Cerezo de Corea" class="arbol-animado">
+            </div>
+        </section>
+    </main>
+
+    <!-- ===== VENTANA MODAL DE CONTRASEÑA PERSONALIZADA ===== -->
+    <div id="modal-admin" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-icon">✿</div>
+            <h3 data-i18n="idxModalTitle">Panel de Administración</h3>
+            <p data-i18n="idxModalText">Ingresa tu contraseña para continuar:</p>
+            <!-- Añadido evento para detectar la tecla Enter -->
+            <input type="password" id="input-password" placeholder="Contraseña..." data-i18n-placeholder="idxPassPh" onkeydown="checarEnter(event)">
+            <div class="modal-botones">
+                <button onclick="verificarPassword()" class="modal-btn-aceptar" data-i18n="idxEnter">Entrar</button>
+                <button onclick="cerrarModalAdmin()" class="modal-btn-cancelar" data-i18n="idxCancel">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== PARTE INFERIOR ===== -->
+    <div class="separador" data-i18n="idxSeparator">
+        ✿ ✿ ✿ ✿ ✿ &nbsp; CRUNCHY, CHEESY & FRESH &nbsp; ✿ ✿ ✿ ✿ ✿
+    </div>
+
+    <!-- ===== MOTOR DE IDIOMAS (ES / EN / KO) ===== -->
+    <script src="Js/i18n.js"></script>
+
+    <!-- ===== SCRIPT PARA LA VENTANA MODAL ===== -->
+    <script>
+    function abrirModalAdmin(event) {
+        event.preventDefault();
+        document.getElementById('modal-admin').style.display = 'flex';
+        document.getElementById('input-password').value = '';
+        document.getElementById('input-password').focus();
+    }
+
+    function cerrarModalAdmin() {
+        document.getElementById('modal-admin').style.display = 'none';
+    }
+
+    async function verificarPassword() {
+        const ingreso = document.getElementById('input-password').value;
+        if (location.protocol === 'file:') {
+            alert(SM.t('fileAlert'));
+            return;
+        }
+        try {
+            const resp = await fetch('login.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ usuario: 'admin', password: ingreso })
+            });
+            const texto = await resp.text();
+            let data;
+            try { data = JSON.parse(texto); }
+            catch (e) { alert(SM.t('badResponse')); return; }
+            if (data.success) {
+                window.location.href = "Administrador.php";
+            } else {
+                let msg;
+                if (resp.status === 401) msg = SM.t('wrongPass');
+                else if (resp.status === 429) msg = SM.t('tooMany');
+                else if (resp.status >= 500) msg = SM.t('noTable') + "\n\n" + SM.t('checkDiag');
+                else msg = SM.srv(data.error) || SM.t('wrongPass');
+                alert(msg);
+                document.getElementById('input-password').value = '';
+            }
+        } catch (e) {
+            alert(SM.t('noConn'));
+        }
+    }
+
+    // Permitir entrar presionando Enter
+    function checarEnter(event) {
+        if (event.key === 'Enter') {
+            verificarPassword();
+        }
+    }
+        // Si venimos redirigidos por falta de sesión, abrir el login
+    if (new URLSearchParams(location.search).get('login') === '1') {
+        window.addEventListener('DOMContentLoaded', () => abrirModalAdmin({ preventDefault() {} }));
+    }
+    </script>
+
+    <!-- ===== VINCULACIÓN DEL JAVASCRIPT PARA LOS PÉTALOS ===== -->
+    <script src="Js/petals.js"></script>
+
+ 
+        });
+    }
+    </script>
+</body>
+</html>

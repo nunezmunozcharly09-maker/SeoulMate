@@ -1,0 +1,5 @@
+# Bloquea archivos internos que no deben verse desde internet
+<FilesMatch "\.(sql|txt|bat)$">
+    Require all denied
+</FilesMatch>
+Options -Indexes

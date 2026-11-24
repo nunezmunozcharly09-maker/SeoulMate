@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="menuTitle">Seoulmate - Menú Coreano</title>
+    <link rel="stylesheet" href="CSS/DisenoSeoulmate.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- SDKs de Firebase Firestore (Compat) -->
+</head>
+<body>
+
+    <div id="app-container">
+        
+        <!-- BARRA LATERAL (ESTÁTICA Y FIJA) -->
+        <aside class="sidebar">
+            <div class="logo-area">
+                <h2>Seoulmate</h2>
+                <span>서울메이트</span>
+            </div>
+            
+            <nav class="nav-menu">
+                <a href="#banderillas" class="active" data-i18n="navBanderillas">Banderillas Coreanas</a>
+                <a href="#tradicionales" data-i18n="navTradicionales">Platillos Tradicionales</a>
+                <a href="#ramen" data-i18n="navRamen">Estación del Ramen</a>
+                <a href="#bebidas" data-i18n="navBebidas">Bebidas Asiáticas</a>
+                <a href="#cafe" data-i18n="navCafe">Seoul Café</a>
+                <a href="#snack" data-i18n="navSnack">K-Snack</a>
+                <a href="#comentarios" data-i18n="navComentarios">💬 Dejar Comentario</a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="table-indicator">
+                    <p><span data-i18n="mesaDetectada">Mesa detectada:</span><br><strong id="table-number" data-mesa="--">Mesa --</strong></p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ÁREA CENTRAL DE CONTENIDO (CON SCROLL INDEPENDIENTE) -->
+        <main class="main-content">
+            
+            <div class="cherry-blossom-decoration"></div>
+
+            <div class="top-cart-bar">
+                <div class="cart-info">
+                    <strong data-i18n="pedidoActual">Pedido Actual:</strong> <span id="cart-count">0 productos</span> | <span data-i18n="totalLabel">Total:</span> <span id="cart-total">$0.00 MXN</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <!-- Selector de Idiomas con Estilo y Logotipo de Mundo -->
+                    <div class="lang-selector-wrapper">
+                        <span class="lang-icon">🌐</span>
+                        <select id="lang-selector" onchange="cambiarIdioma(this.value)">
+                            <option value="es">ES - Español</option>
+                            <option value="en">EN - English</option>
+                            <option value="ko">KR - 한국어</option>
+                        </select>
+                    </div>
+
+                    <button class="btn-checkout" onclick="verCarrito()" data-i18n="verCarritoBtn">🛒 Ver Carrito</button>
+                    <!-- Oculto para clientes por defecto, visible con ?admin=1 -->
+                    <button id="btn-admin-ordenes" class="btn-checkout" style="background: #333; margin-left: 4px; display: none;" onclick="location.href='Administrador.php'">👨‍🍳 Admin</button>
+                </div>
+            </div>
+
+            <header class="top-header">
+                <div class="brand-title">
+                    <span class="hanja-icon">식</span>
+                    <h1>Seoulmate</h1>
+                    <span class="hanja-sub">서울메이트</span>
+                </div>
+            </header>
+
+            <div class="menu-title-box">
+                <h2>메뉴</h2>
+                <span>MENU</span>
+            </div>
+
+            <!-- BANDERILLAS COREANAS -->
+            <h3 class="category-subtitle" id="banderillas" data-i18n="catBanderillas">Banderillas Coreanas</h3>
+            <section class="products-grid">
+                <div class="product-card">
+                    <div class="card-frame"><img src="img/classic.jpg" alt="Classic Gold"></div>
+                    <h3 data-i18n="p1Name">Classic Gold</h3>
+                    <p class="description" data-i18n="p1Desc">Banderilla tradicional con relleno a elegir y cubierta crujiente de Panko.</p>
+                    <div class="price-container">
+                        <span class="price-mxn" data-base-price="65">$65.00 MXN</span>
+                    </div>
+                    <div class="qty-selector">
+                        <button onclick="cambiarCantCard(1, -1)">-</button>
+                        <span id="qty-card-1">1</span>
+                        <button onclick="cambiarCantCard(1, 1)">+</button>
+                    </div>
+                    <div class="card-actions-dual">
+                        <button class="btn-action btn-custom" onclick="openCustomizer(1)" data-i18n="btnPersonalizar">Personalizar</button>
+                        <button class="btn-action btn-direct" onclick="agregarDirecto(1)" data-i18n="btnPedir">Pedir</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="card-frame"><img src="img/potato.jpg" alt="Potato Bomb"></div>
+                    <h3 data-i18n="p2Name">Potato Bomb</h3>
+                    <p class="description" data-i18n="p2Desc">Banderilla con relleno a elegir, cubierta de trocitos de papas fritas doradas.</p>
+                    <div class="price-container">
+                        <span class="price-mxn" data-base-price="85">$85.00 MXN</span>
+                    </div>
+                    <div class="qty-selector">
+                        <button onclick="cambiarCantCard(2, -1)">-</button>
+                        <span id="qty-card-2">1</span>
+                        <button onclick="cambiarCantCard(2, 1)">+</button>
+                    </div>
+                    <div class="card-actions-dual">
+                        <button class="btn-action btn-custom" onclick="openCustomizer(2)" data-i18n="btnPersonalizar">Personalizar</button>
+                        <button class="btn-action btn-direct" onclick="agregarDirecto(2)" data-i18n="btnPedir">Pedir</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="card-frame"><img src="img/ramen.jpg" alt="Krispy Ramen"></div>
+                    <h3 data-i18n="p3Name">Krispy Ramen</h3>
+                    <p class="description" data-i18n="p3Desc">Banderilla con relleno a elegir, cubierta con costra crujiente de ramen.</p>
+                    <div class="price-container">
+                        <span class="price-mxn" data-base-price="75">$75.00 MXN</span>
+                    </div>
+                    <div class="qty-selector">
+                        <button onclick="cambiarCantCard(3, -1)">-</button>
+                        <span id="qty-card-3">1</span>
+                        <button onclick="cambiarCantCard(3, 1)">+</button>
+                    </div>
+                    <div class="card-actions-dual">
+                        <button class="btn-action btn-custom" onclick="openCustomizer(3)" data-i18n="btnPersonalizar">Personalizar</button>
+                        <button class="btn-action btn-direct" onclick="agregarDirecto(3)" data-i18n="btnPedir">Pedir</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="card-frame"><img src="img/cheeto.jpg" alt="Hot Cheeto"></div>
+                    <h3 data-i18n="p4Name">Hot Cheeto</h3>
+                    <p class="description" data-i18n="p4Desc">Banderilla con relleno a elegir, empanizada y espolvoreada con Cheetos Flaming Hot.</p>
+                    <div class="price-container">
+                        <span class="price-mxn" data-base-price="80">$80.00 MXN</span>
+                    </div>
+                    <div class="qty-selector">
+                        <button onclick="cambiarCantCard(4, -1)">-</button>
+                        <span id="qty-card-4">1</span>
+                        <button onclick="cambiarCantCard(4, 1)">+</button>
+                    </div>
+                    <div class="card-actions-dual">
+                        <button class="btn-action btn-custom" onclick="openCustomizer(4)" data-i18n="btnPersonalizar">Personalizar</button>
+                        <button class="btn-action btn-direct" onclick="agregarDirecto(4)" data-i18n="btnPedir">Pedir</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PLATILLOS TRADICIONALES -->
+            <h3 class="category-subtitle" id="tradicionales" data-i18n="catTradicionales">Platillos Tradicionales</h3>
+            <section class="products-grid">
+                <div class="product-card">
+                    <div class="card-frame"><img src="img/gyozas.jpg" alt="Gyozas"></div>
+                    <h3 data-i18n="p5Name">Gyozas</h3>
+                    <p class="description" data-i18n="p5Desc">Empanadas japonesas/coreanas al vapor y selladas a la plancha.</p>
+                    <div class="price-container">
+                        <span class="price-mxn" data-base-price="90">$90.00 MXN</span>
+                    </div>
+                    <div class="qty-selector">
+                        <button onclick="cambiarCantCard(5, -1)">-</button>
+                        <span id="qty-card-5">1</span>
+                        <button onclick="cambiarCantCard(5, 1)">+</button>
+                    </div>
+                    <div class="card-actions-dual">
+                        <button class="btn-action btn-custom" onclick="openCustomizer(5)" data-i18n="btnPersonalizar">Personalizar</button>
+                        <button class="btn-action btn-direct" onclick="agregarDirecto(5)" data-i18n="btnPedir">Pedir</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="card-frame"><img src="img/bibimbap.jpg" alt="Bibimbap"></div>
+                    <h3 data-i18n="p6Name">Bibimbap</h3>
+                    <p class="description" data-i18n="p6Desc">Tazón de arroz con vegetales salteados, carne y salsa de chile coreano.</p>
+                    <div class="price-container">
+                        <span class="price-mxn" data-base-price="135">$135.00 MXN</span>
+                    </div>
+                    <div class="qty-selector">
+                        <button onclick="cambiarCantCard(6, -1)">-</button>
+                        <span id="qty-card-6">1</span>
+                        <button onclick="cambiarCantCard(6, 1)">+</button>
+                    </div>
+                    <div class="card-actions-dual">
+                        <button class="btn-action btn-custom" onclick="openCustomizer(6)" data-i18n="btnPersonalizar">Personalizar</button>
+                        <button class="btn-action btn-direct" onclick="agregarDirecto(6)" data-i18n="btnPedir">Pedir</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="card-frame"><img src="img/kimchi.jpg" alt="Kimchi"></div>
+                    <h3 data-i18n="p7Name">Kimchi</h3>
+                    <p class="description" data-i18n="p7Desc">Acompañamiento tradicional de col fermentada sazonada y picante.</p>
+                    <div class="price-container">
+                        <span class="price-mxn" data-base-price="45">$45.00 MXN</span>
+                    </div>
+                    <div class="qty-selector">
+                        <button onclick="cambiarCantCard(7, -1)">-</button>
+                        <span id="qty-card-7">1</span>
+                        <button onclick="cambiarCantCard(7, 1)">+</button>
+                    </div>
+                    <div class="card-actions-dual">
+                        <button class="btn-action btn-custom" onclick="openCustomizer(7)" data-i18n="btnPersonalizar">Personalizar</button>
+                        <button class="btn-action btn-direct" onclick="agregarDirecto(7)" data-i18n="btnPedir">Pedir</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ESTACIÓN DEL RAMEN -->
+            <h3 class="category-subtitle" id="ramen" data-i18n="catRamen">Estación del Ramen</h3>
+            <section class="products-grid">
+                <div class="product-card">
+                    <div class="card-frame"><img src="img/blackvelvet.jpg" alt="Black Velvet"></div>
+                    <h3 data-i18n="p8Name">Black Velvet</h3>
+                    <p class="description" data-i18n="p8Desc">Ramen coreano en salsa de frijol negro dulce (Jajangmyeon).</p>
+                    <div class="price-container">
+                        <span class="price-mxn" data-base-price="110">$110.00 MXN</span>
+                    </div>
+                    <div class="qty-selector">
+                        <button onclick="cambiarCantCard(8, -1)">-</button>
+                        <span id="qty-card-8">1</span>
+                        <button onclick="cambiarCantCard(8, 1)">+</button>
+                    </div>
+                    <div class="card-actions-dual">
+                        <button class="btn-action btn-custom" onclick="openCustomizer(8)" data-i18n="btnPersonalizar">Personalizar</button>
+                        <button class="btn-action btn-direct" onclick="agregarDirecto(8)" data-i18n="btnPedir">Pedir</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="card-frame"><img src="img/cheeseramen.jpg" alt="Cheese Ramen"></div>
+                    <h3 data-i18n="p9Name">Cheese Ramen</h3>
+                    <p class="description" data-i18n="p9Desc">Sopa ramen cremosa con toque de queso fundido y cebollín.</p>
+                    <div class="price-container">
+                        <span class="price-mxn" data-base-price="95">$95.00 MXN</span>
+                    </div>
+                    <div class="qty-selector">
+                        <button onclick="cambiarCantCard(9, -1)">-</button>
+                        <span id="qty-card-9">1</span>
+                        <button onclick="cambiarCantCard(9, 1)">+</button>
+                    </div>
+                    <div class="card-actions-dual">
+                        <button class="btn-action btn-custom" onclick="openCustomizer(9)" data-i18n="btnPersonalizar">Personalizar</button>
+                        <button class="btn-action btn-direct" onclick="agregarDirecto(9)" data-i18n="btnPedir">Pedir</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="card-frame"><img src="img/redtide.jpg" alt="Red Tide"></div>
+                    <h3 data-i18n="p10Name">Red Tide</h3>
+                    <p class="description" data-i18n="p10Desc">Ramen picante estilo coreano con mariscos y especias.</p>
+                    <div class="price-container">
+                        <span class="price-mxn" data-base-price="105">$105.00 MXN</span>
+                    </div>
+                    <div class="qty-selector">
+                        <button onclick="cambiarCantCard(10, -1)">-</button>
+                        <span id="qty-card-10">1</span>
+                        <button onclick="cambiarCantCard(10, 1)">+</button>
+                    </div>
+                    <div class="card-actions-dual">
+                        <button class="btn-action btn-custom" onclick="openCustomizer(10)" data-i18n="btnPersonalizar">Personalizar</button>
+                        <button class="btn-action btn-direct" onclick="agregarDirecto(10)" data-i18n="btnPedir">Pedir</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- BEBIDAS ASIÁTICAS -->
+            <h3 class="category-subtitle" id="bebidas" data-i18n="catBebidas">Bebidas Asiáticas</h3>
+            <section class="products-grid">
+                <div class="product-card">
+                    <div class="card-frame"><img src="img/hwachae.jpg" alt="Hwachae"></div>
+                    <h3 data-i18n="p11Name">Hwachae</h3>
+                    <p class="description" data-i18n="p11Desc">Postre-bebida refrescante tradicional con frutas y leche condensada.</p>
+                    <div class="price-container">
+                        <span class="price-mxn" data-base-price="85">$85.00 MXN</span>
+                    </div>
+                    <div class="qty-selector">
+                        <button onclick="cambiarCantCard(11, -1)">-</button>
+                        <span id="qty-card-11">1</span>
+                        <button onclick="cambiarCantCard(11, 1)">+</button>
+                    </div>
+                    <div class="card-actions-dual">
+                        <button class="btn-action btn-custom" onclick="openCustomizer(11)" data-i18n="btnPersonalizar">Personalizar</button>
+                        <button class="btn-action btn-direct" onclick="agregarDirecto(11)" data-i18n="btnPedir">Pedir</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="card-frame"><img src="img/soju.jpg" alt="Soju"></div>
+                    <h3 data-i18n="p12Name">Soju</h3>
+                    <p class="description" data-i18n="p12Desc">Bebida alcohólica destilada tradicional de Corea.</p>
+                    <div class="price-container">
+                        <span class="price-mxn" data-base-price="120">$120.00 MXN</span>
+                    </div>
+                    <div class="qty-selector">
+                        <button onclick="cambiarCantCard(12, -1)">-</button>
+                        <span id="qty-card-12">1</span>
+                        <button onclick="cambiarCantCard(12, 1)">+</button>
+                    </div>
+                    <div class="card-actions-dual">
+                        <button class="btn-action btn-custom" onclick="openCustomizer(12)" data-i18n="btnPersonalizar">Personalizar</button>
+                        <button class="btn-action btn-direct" onclick="agregarDirecto(12)" data-i18n="btnPedir">Pedir</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="card-frame"><img src="img/hallabong.jpg" alt="Hallabong"></div>
+                    <h3 data-i18n="p13Name">Hallabong</h3>
+                    <p class="description" data-i18n="p13Desc">Bebida cítrica refrescante elaborada con mandarina de Jeju.</p>
+                    <div class="price-container">
+                        <span class="price-mxn" data-base-price="65">$65.00 MXN</span>
+                    </div>
+                    <div class="qty-selector">
+                        <button onclick="cambiarCantCard(13, -1)">-</button>
+                        <span id="qty-card-13">1</span>
+                        <button onclick="cambiarCantCard(13, 1)">+</button>
+                    </div>
+                    <div class="card-actions-dual">
+                        <button class="btn-action btn-custom" onclick="openCustomizer(13)" data-i18n="btnPersonalizar">Personalizar</button>
+                        <button class="btn-action btn-direct" onclick="agregarDirecto(13)" data-i18n="btnPedir">Pedir</button>
+                    </div> 
+                </div>
+            </section>
+
+            <!-- SEOUL CAFÉ -->
+            <h3 class="category-subtitle" id="cafe" data-i18n="catCafe">Seoul Café</h3>
+            <section class="products-grid">
+                <div class="product-card">
+                    <div class="card-frame"><img src="img/bananacoffee.jpg" alt="Banana Milk Coffee"></div>
+                    <h3 data-i18n="p14Name">Banana Milk Coffee</h3>
+                    <p class="description" data-i18n="p14Desc">Café espresso con la clásica leche sabor banana coreana.</p>
+                    <div class="price-container">
+                        <span class="price-mxn" data-base-price="70">$70.00 MXN</span>
+                    </div>
+                    <div class="qty-selector">
+                        <button onclick="cambiarCantCard(14, -1)">-</button>
+                        <span id="qty-card-14">1</span>
+                        <button onclick="cambiarCantCard(14, 1)">+</button>
+                    </div>
+                    <div class="card-actions-dual">
+                        <button class="btn-action btn-custom" onclick="openCustomizer(14)" data-i18n="btnPersonalizar">Personalizar</button>
+                        <button class="btn-action btn-direct" onclick="agregarDirecto(14)" data-i18n="btnPedir">Pedir</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="card-frame"><img src="img/dalgona.jpg" alt="Dalgona Coffee"></div>
+                    <h3 data-i18n="p15Name">Dalgona Coffee</h3>
+                    <p class="description" data-i18n="p15Desc">Café batido espumoso servido sobre leche fría cremosa.</p>
+                    <div class="price-container">
+                        <span class="price-mxn" data-base-price="75">$75.00 MXN</span>
+                    </div>
+                    <div class="qty-selector">
+                        <button onclick="cambiarCantCard(15, -1)">-</button>
+                        <span id="qty-card-15">1</span>
+                        <button onclick="cambiarCantCard(15, 1)">+</button>
+                    </div>
+                    <div class="card-actions-dual">
+                        <button class="btn-action btn-custom" onclick="openCustomizer(15)" data-i18n="btnPersonalizar">Personalizar</button>
+                        <button class="btn-action btn-direct" onclick="agregarDirecto(15)" data-i18n="btnPedir">Pedir</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="card-frame"><img src="img/injeolmilatte.jpg" alt="Injeolmi Latte"></div>
+                    <h3 data-i18n="p16Name">Injeolmi Latte</h3>
+                    <p class="description" data-i18n="p16Desc">Latte cremoso con notas de harina de soya tostada y arroz.</p>
+                    <div class="price-container">
+                        <span class="price-mxn" data-base-price="80">$80.00 MXN</span>
+                    </div>
+                    <div class="qty-selector">
+                        <button onclick="cambiarCantCard(16, -1)">-</button>
+                        <span id="qty-card-16">1</span>
+                        <button onclick="cambiarCantCard(16, 1)">+</button>
+                    </div>
+                    <div class="card-actions-dual">
+                        <button class="btn-action btn-custom" onclick="openCustomizer(16)" data-i18n="btnPersonalizar">Personalizar</button>
+                        <button class="btn-action btn-direct" onclick="agregarDirecto(16)" data-i18n="btnPedir">Pedir</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- K-SNACK -->
+            <h3 class="category-subtitle" id="snack" data-i18n="catSnack">K-Snack</h3>
+            <section class="products-grid">
+                <div class="product-card">
+                    <div class="card-frame"><img src="img/pepero.jpg" alt="Pepero"></div>
+                    <h3 data-i18n="p17Name">Pepero</h3>
+                    <p class="description" data-i18n="p17Desc">Galletas en barra cubiertas de chocolate crujiente.</p>
+                    <div class="price-container">
+                        <span class="price-mxn" data-base-price="35">$35.00 MXN</span>
+                    </div>
+                    <div class="qty-selector">
+                        <button onclick="cambiarCantCard(17, -1)">-</button>
+                        <span id="qty-card-17">1</span>
+                        <button onclick="cambiarCantCard(17, 1)">+</button>
+                    </div>
+                    <div class="card-actions-dual">
+                        <button class="btn-action btn-custom" onclick="openCustomizer(17)" data-i18n="btnPersonalizar">Personalizar</button>
+                        <button class="btn-action btn-direct" onclick="agregarDirecto(17)" data-i18n="btnPedir">Pedir</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="card-frame"><img src="img/mychew.jpg" alt="My Chew"></div>
+                    <h3 data-i18n="p18Name">My Chew</h3>
+                    <p class="description" data-i18n="p18Desc">Dulces masticables suaves coreanos sabor frutal.</p>
+                    <div class="price-container">
+                        <span class="price-mxn" data-base-price="25">$25.00 MXN</span>
+                    </div>
+                    <div class="qty-selector">
+                        <button onclick="cambiarCantCard(18, -1)">-</button>
+                        <span id="qty-card-18">1</span>
+                        <button onclick="cambiarCantCard(18, 1)">+</button>
+                    </div>
+                    <div class="card-actions-dual">
+                        <button class="btn-action btn-custom" onclick="openCustomizer(18)" data-i18n="btnPersonalizar">Personalizar</button>
+                        <button class="btn-action btn-direct" onclick="agregarDirecto(18)" data-i18n="btnPedir">Pedir</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="card-frame"><img src="img/ramenpacket.jpg" alt="Ramen Packet"></div>
+                    <h3 data-i18n="p19Name">Ramen Packet</h3>
+                    <p class="description" data-i18n="p19Desc">Paquete de ramen instantáneo coreano tradicional.</p>
+                    <div class="price-container">
+                        <span class="price-mxn" data-base-price="45">$45.00 MXN</span>
+                    </div>
+                    <div class="qty-selector">
+                        <button onclick="cambiarCantCard(19, -1)">-</button>
+                        <span id="qty-card-19">1</span>
+                        <button onclick="cambiarCantCard(19, 1)">+</button>
+                    </div>
+                    <div class="card-actions-dual">
+                        <button class="btn-action btn-custom" onclick="openCustomizer(19)" data-i18n="btnPersonalizar">Personalizar</button>
+                        <button class="btn-action btn-direct" onclick="agregarDirecto(19)" data-i18n="btnPedir">Pedir</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PLATOS NUEVOS (agregados desde el panel de administrador) -->
+            <h3 class="category-subtitle" id="titulo-nuevos" data-i18n="moreMenu" style="display:none;">✨ Más del Menú</h3>
+            <section class="products-grid" id="productos-dinamicos"></section>
+
+            <!-- SECCIÓN DE COMENTARIOS Y SUGERENCIAS -->
+            <h3 class="category-subtitle" id="comentarios" data-i18n="navComentarios">💬 Dejar Comentario</h3>
+            <section class="comment-section-card">
+                <p data-i18n="commentSubtext">¿Tienes alguna sugerencia o comentario sobre nuestro menú o experiencia? ¡Escríbenos!</p>
+                <div class="comment-form">
+                    <input type="text" id="comment-name" data-i18n-placeholder="commentNamePlaceholder" placeholder="Tu nombre (opcional)">
+                    <textarea id="comment-text" data-i18n-placeholder="commentTextPlaceholder" placeholder="Escribe aquí tu comentario o sugerencia sobre la página..."></textarea>
+                    <button class="btn-action btn-direct" onclick="enviarComentarioPagina()" data-i18n="commentSendBtn">Enviar Comentario</button>
+                    <span id="comment-status" style="display: none; font-size: 0.85rem; font-weight: 600; margin-top: 8px;"></span>
+                </div>
+            </section>
+
+            <footer class="bottom-footer-social">
+                <div class="footer-tagline" data-i18n="footerTag">THE BEST KOREAN CORNDOGS! | K-STREET FOOD EXPERIENCE</div>
+                <div class="social-links">
+                    <span>IG: @seoulmate_mx</span>
+                    <span>FB: <span data-i18n="fbName">Seoulmate Oficial</span></span>
+                    <span>WhatsApp: +52 55 1234 5678</span>
+                </div>
+            </footer>
+
+        </main>
+    </div>
+
+    <!-- MODAL DE PERSONALIZACIÓN -->
+    <div id="custom-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="custom-title" data-i18n="modCustomTitle">Personalizar Producto</h3>
+                <button class="close-btn" onclick="closeCustomizer()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="custom-group modal-qty-group">
+                    <h4 data-i18n="modQtyLabel">Cantidad a ordenar:</h4>
+                    <div class="qty-selector">
+                        <button onclick="cambiarCantModal(-1)">-</button>
+                        <span id="custom-modal-qty">1</span>
+                        <button onclick="cambiarCantModal(1)">+</button>
+                    </div>
+                </div>
+
+                <div id="dynamic-options-container"></div>
+
+                <div class="custom-group">
+                    <h4 data-i18n="modNotesLabel">Comentarios o instrucciones especiales</h4>
+                    <textarea id="custom-notes" data-i18n-placeholder="modNotesPlaceholder" placeholder="Ej. Alergias, empaque por separado, bien caliente..."></textarea>
+                    <span id="note-error" style="color: #e74c3c; font-size: 12px; display: none; margin-top: 5px;" data-i18n="modNoteError">
+                        ⚠️ Solo se permiten letras y espacios (sin números ni símbolos).
+                    </span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-confirmar" onclick="confirmarPersonalizacion()" data-i18n="modAddCartBtn">Agregar al Carrito</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL TICKET DE COMPRA -->
+    <div id="ticket-modal" class="modal-overlay">
+        <div class="modal-content ticket-style">
+            <div class="ticket-header">
+                <h2>Seoulmate</h2>
+                <p>서울메이트</p>
+                <p id="ticket-title-status" data-i18n="ticketGracias">¡Gracias por tu compra!</p>
+                <p><strong id="ticket-subtitle" data-i18n="ticketCocina">Tu pedido ha sido enviado a cocina 🍳</strong></p>
+            </div>
+            <hr class="ticket-divider">
+            <div class="ticket-details">
+                <p><strong data-i18n="ticketUbicacion">Ubicación:</strong> <span id="ticket-table">Mesa --</span></p>
+                <p><strong data-i18n="ticketFecha">Fecha y Hora:</strong> <span id="ticket-time">--/--/---- --:--</span></p>
+            </div>
+            <hr class="ticket-divider">
+            <div id="ticket-items-list" class="ticket-body"></div>
+            <hr class="ticket-divider">
+            <div class="ticket-total-row">
+                <span data-i18n="ticketTotal">TOTAL:</span>
+                <strong id="ticket-final-total">$0.00 MXN</strong>
+            </div>
+            <div class="modal-footer" style="margin-top: 15px; padding: 0; background: none; border: none;">
+                <button class="btn-confirmar" onclick="cerrarTicket()" data-i18n="ticketCerrar">Entendido / Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CALIFICAR COMIDA (aparece al cerrar el ticket) -->
+    <div id="rating-modal" class="modal-overlay">
+        <div class="modal-content rating-modal">
+            <div class="rating-body">
+                <h3 data-i18n="ratingTitle">🌟 Valora tu experiencia</h3>
+                <p data-i18n="ratingSub">¿Qué te pareció nuestro servicio?</p>
+                <div id="rating-stars" class="rating-stars">
+                    <button type="button" data-v="1" onclick="elegirEstrellas(1)" aria-label="1">★</button>
+                    <button type="button" data-v="2" onclick="elegirEstrellas(2)" aria-label="2">★</button>
+                    <button type="button" data-v="3" onclick="elegirEstrellas(3)" aria-label="3">★</button>
+                    <button type="button" data-v="4" onclick="elegirEstrellas(4)" aria-label="4">★</button>
+                    <button type="button" data-v="5" onclick="elegirEstrellas(5)" aria-label="5">★</button>
+                </div>
+                <span id="rating-error" class="rating-error" data-i18n="ratingPick">Elige de 1 a 5 estrellas</span>
+                <textarea id="rating-comment" maxlength="200" data-i18n-placeholder="ratingCommentPh" placeholder="Cuéntanos más (opcional)"></textarea>
+                <div class="rating-actions">
+                    <button id="rating-send" class="btn-confirmar" onclick="enviarCalificacion()" data-i18n="ratingBtnEnviar">Enviar Valoración</button>
+                    <button class="btn-omitir" onclick="cerrarCalificacion()" data-i18n="ratingBtnOmitir">Omitir por ahora</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CARRITO DESPLEGABLE -->
+    <div id="cart-drawer" class="cart-drawer">
+        <canvas id="cart-petals-canvas"></canvas>
+
+        <div class="drawer-header">
+            <h3 data-i18n="drawerTitle">📋 Tu Pedido</h3>
+            <button class="close-btn" onclick="cerrarCarrito()">✕</button>
+        </div>
+        <div id="drawer-items" class="drawer-body">
+            <p class="empty-msg" data-i18n="drawerEmpty">Tu carrito está vacío</p>
+        </div>
+        <div class="drawer-footer">
+            <div class="total-row">
+                <span data-i18n="drawerTotalLabel">Total:</span>
+                <strong id="drawer-total">$0.00 MXN</strong>
+            </div>
+            <button class="btn-confirmar" onclick="confirmarPedido()" data-i18n="drawerConfirmBtn">Confirmar Pedido</button>
+        </div>
+    </div>
+
+    <div id="cart-overlay" class="cart-overlay" onclick="cerrarCarrito()"></div>
+
+    <!-- Script principal de lógica, carrito y Firebase -->
+    <!-- Motor de idiomas compartido (debe ir antes de carrito.js) -->
+    <script src="Js/i18n.js"></script>
+    <script src="Js/carrito.js"></script>
+
+    
+        });
+    }
+    </script>
+</body>
+</html>

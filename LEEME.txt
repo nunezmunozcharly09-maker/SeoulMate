@@ -1,0 +1,67 @@
+SEOULMATE - PUESTA EN MARCHA (XAMPP)
+====================================
+IMPORTANTE: NO abras index.html desde dentro del zip ni con doble clic.
+  Primero: clic derecho en el .zip -> "Extraer todo".
+
+1. Abre XAMPP y enciende Apache y MySQL.
+2. Doble clic en INSTALAR_EN_XAMPP.bat (copia todo a C:\xampp\htdocs\SeoulMate y abre el sitio),
+   o copia la carpeta tú mismo a C:\xampp\htdocs\SeoulMate
+3. En http://localhost/phpmyadmin -> pestaña SQL -> pega TODO el contenido de schema.sql -> Continuar.
+   (sirve para base nueva o para tu seoulmate_db existente; no borra datos)
+4. Abre http://localhost/SeoulMate/diagnostico.php  -> si algo sale con ✘, pulsa "Importar schema.sql ahora" (reemplaza el paso 3 de phpMyAdmin).
+   Cuando todo salga con ✔, abre http://localhost/SeoulMate/index.html  (NO abras los archivos con doble clic: PHP necesita Apache).
+5. Botón "Administrador" -> contraseña inicial: Cha&Azul
+
+CAMBIAR LA CONTRASEÑA DEL ADMIN
+  a) En CMD:  C:\xampp\php\php.exe -r "echo password_hash('TU_NUEVA_CLAVE', PASSWORD_DEFAULT);"
+  b) En phpMyAdmin (SQL):  UPDATE admins SET password_hash='EL_HASH_QUE_SALIO' WHERE usuario='admin';
+
+SI TU MYSQL NO ES XAMPP/MariaDB (por ejemplo MySQL 8): "ADD COLUMN IF NOT EXISTS" no existe ahi;
+  quita el "IF NOT EXISTS" de esas 7 líneas y ejecútalas una sola vez.
+Usuario/contraseña de MySQL: archivo conexion.php (por defecto root sin contraseña).
+
+QR POR MESA
+  1) Sube el sitio a tu hosting y abre  https://TU-DOMINIO/SeoulMate/QR_Mesas.html
+  2) Elige mesa inicial y final > "Generar QR" > "Imprimir" (o "Descargar PNG" de cada una).
+  3) Al escanear, el menú muestra la mesa automáticamente (Menu.html?mesa=4).
+  Si alguien abre el menú sin QR, sale "Mesa --" y no puede enviar pedidos.
+  Botón Admin en el menú: Menu.html?admin=1
+
+AL SUBIR A INTERNET (hosting con PHP + MySQL)
+  - Cambia host/usuario/contraseña/base en conexion.php por los de tu hosting.
+  - Importa schema.sql desde el phpMyAdmin del hosting.
+  - Cambia la contraseña de admin (ver arriba).
+  - diagnostico.php se eliminó por seguridad; .htaccess bloquea .sql/.txt/.bat.
+
+
+IDIOMAS (ES / EN / KO)
+  El botón 🌐 está en la portada (index.html), en el menú y en el panel de administrador.
+  El idioma elegido en cualquiera se guarda y se aplica a TODO el sitio (portada, menú, carrito, ticket y administrador).
+  Todos los textos viven en Js/i18n.js (sección PACK = interfaz, DYN = nombres de platillos/opciones/categorías).
+  Si agregas un platillo u opción NUEVA desde el administrador, se muestra con el nombre que escribas;
+  para que también se traduzca, añade su nombre en español a DYN (y su descripción/nombre en PACK si es un platillo fijo).
+
+
+INVENTARIO POR INGREDIENTES (NUEVO)
+  IMPORTANTE: vuelve a importar schema.sql (paso 3 o 4 de arriba). No borra tus datos; solo crea las tablas
+  ingredientes, recetas y opcion_ingredientes y carga una receta de ejemplo para los 19 platillos.
+  LAS CANTIDADES Y EXISTENCIAS INICIALES SON ESTIMADAS: ajústalas a tu cocina real.
+
+  Cómo funciona
+  - Administrador > Inventario: lista de ingredientes con lo que queda de cada uno (g / ml / pza), mínimo para avisar,
+    estado (Suficiente / Stock bajo / AGOTADO), y botones para reabastecer (+), editar y eliminar.
+  - Administrador > Gestión de Menú: cada platillo muestra sus ingredientes y "Se pueden preparar: N".
+    Botón "Receta" = editar qué ingredientes (y cuánto de cada uno) gasta UNA unidad de ese platillo.
+  - Administrador > Ingredientes y Extras: cada opción tiene su columna "Consume / Omite".
+      Relleno, proteína, sabor y extra  -> descuentan su ingrediente (ej. relleno "Salchicha" = 1 pza de Salchicha).
+      "Sin ..."                         -> ese ingrediente NO se descuenta (ej. "Sin Ketchup" no gasta Ketchup).
+    Si el cliente usa "Pedir" sin personalizar, se asume la primera opción de relleno/proteína/sabor de la lista.
+  - Cada pedido confirmado descuenta todos los ingredientes en la base de datos, en una sola operación: si falta
+    alguno, el pedido completo se rechaza y no se descuenta nada.
+  - Aviso en el administrador: franja roja arriba (en todas las pestañas) cuando hay productos o ingredientes AGOTADOS,
+    y amarilla cuando un ingrediente llega a su mínimo. También hay tarjetas en el Dashboard.
+  - Cliente (Menu.html): el platillo sin ingredientes sale con "AGOTADO"; si lo toca aparece un aviso. No puede
+    pedir más unidades de las que se pueden preparar, y los rellenos/sabores/extras agotados salen deshabilitados.
+  - Un platillo SIN receta (por ejemplo uno nuevo) sigue usando el campo "Stock" manual de siempre.
+  - El menú del cliente revisa el stock al abrir la página; el servidor lo vuelve a validar al confirmar el pedido.
+
